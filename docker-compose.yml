@@ -1,0 +1,25 @@
+---
+version: "3.8"
+services:
+  jenkins-docker:
+    image: jenkins-docker:0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+      - target: 50000
+        published: 50000
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: bind
+        source: /var/jenkins_home
+        target: /var/jenkins_home
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+...

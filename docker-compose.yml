@@ -22,4 +22,37 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
+    networks:
+      - jenkins
+  postgres:
+    image: postgres:latest
+    networks:
+      - jenkins
+    environment:
+      POSTGRES_USER: ${SONAR_USER}
+      POSTGRES_PASSWORD: ${SONAR_PASSWORD}
+    volumes:
+      - /opt/postgres-data:/var/lib/postgresql/data
+  sonarqube:
+    image: sonarqube:latest
+    ports:
+      - target: 9000
+        published: 9000
+        protocol: tcp
+        mode: host
+      - target: 9092
+        published: 9092
+        protocol: tcp
+        mode: host
+    networks:
+      - jenkins
+    environment:
+      SONARQUBE_JDBC_USERNAME: ${SONAR_USER}
+      SONARQUBE_JDBC_PASSWORD: ${SONAR_PASSWORD}
+      SONARQUBE_JDBC_URL: "jdbc:postgresql://postgres:5432/sonar"
+    depends_on:
+      - postgres
+
+networks:
+  jenkins:
 ...
